@@ -1,4 +1,3 @@
-
 from flask import Flask
 from threading import Thread
 import os
@@ -28,12 +27,12 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 # Environment token
 BOT_TOKEN = os.environ['TELEGRAM_TOKEN']
-ADMIN_ID = 5762701937  # Replace with your Telegram user ID
+ADMIN_ID = 5762701937  # Your Telegram ID
 
 # Simulated premium users list (replace with DB later)
 premium_users = [ADMIN_ID]
 
-# Start command handler
+# /start command
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [["Today's Jobs"], ["Contact", "About"]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
@@ -43,14 +42,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
-# Dummy job command
-async def todays_jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("📋 Today's Jobs:
-- Job 1
-- Job 2
-- Job 3")
+# /jobs command
+async def jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("📋 Today's Jobs:\n\n• Job 1\n• Job 2")
 
-# Dummy search command
+# /search command
 async def search_job(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id not in premium_users:
@@ -58,26 +54,28 @@ async def search_job(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     await update.message.reply_text("🔍 Please send your search keyword.")
 
-# Dummy AI response
+# /ask command (AI)
 async def ask_ai(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🤖 AI Answer: This is a sample AI response.")
 
-# Admin command
+# /admin command
 async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id != ADMIN_ID:
         await update.message.reply_text("🚫 You are not authorized to use this command.")
         return
-    await update.message.reply_text("👨‍💻 Admin Panel:
-- Total Users: 123
-- Premium Users: 5")
+    await update.message.reply_text(
+        "👨‍💻 Admin Panel:\n"
+        "- Total Users: 123\n"
+        "- Premium Users: 5"
+    )
 
 # Initialize and run bot
 if __name__ == "__main__":
     keep_alive()
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("jobs", todays_jobs))
+    app.add_handler(CommandHandler("jobs", jobs))  # fixed function name
     app.add_handler(CommandHandler("search", search_job))
     app.add_handler(CommandHandler("ask", ask_ai))
     app.add_handler(CommandHandler("admin", admin))
