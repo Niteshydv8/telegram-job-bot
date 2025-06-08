@@ -35,17 +35,12 @@ premium_users = [ADMIN_ID]
 
 # Start command handler
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    is_premium = user_id in premium_users
-    if is_premium:
-        keyboard = [["Today's Jobs", "Search Job"], ["Premium Jobs", "Ask AI"], ["Admin"]]
-    else:
-        keyboard = [["Today's Jobs"], ["Ask AI (3/day)"], ["Upgrade to Premium"]]
+    keyboard = [["Today's Jobs"], ["Contact", "About"]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+
     await update.message.reply_text(
-        f"👋 Welcome {update.effective_user.first_name}!
-You're {'a Premium' if is_premium else 'a Free'} user.",
-        reply_markup=reply_markup,
+        f"👋 Welcome {update.effective_user.first_name}!",
+        reply_markup=reply_markup
     )
 
 # Dummy job command
